@@ -105,7 +105,7 @@ class BikeRepairShopSimulation:
                     # Generate random precipitation for the day
                     precipitation = np.random.normal(
                         self.monthly_avg_precipitation[month]/30,
-                        self.monthly_avg_precipitation[month]/100
+                        self.monthly_avg_precipitation[month]/100 # standard deviation as 1% of monthly average precipitation
                     )
                     precipitation = max(0, precipitation)
 
@@ -129,6 +129,9 @@ class BikeRepairShopSimulation:
                     queue.sort(key=lambda x: x[0])  # Sort by arrival day (FIFO)
                     new_queue = []
 
+                    # Initialize a temporary list to collect all satisfaction scores for the current day
+                    daily_satisfaction_scores = []
+
                     for request in queue:
                         arrival_day, repair_time, parts_cost = request
 
@@ -144,7 +147,8 @@ class BikeRepairShopSimulation:
                             repair_price = self.repair_price_average * price_modifier
                             revenue += repair_price - parts_cost
 
-                            results["customer_satisfaction"].append(
+                            # Add satisfaction score to daily collection instead of results
+                            daily_satisfaction_scores.append(
                                 self.calculate_customer_satisfaction(wait_time)
                             )
                         else:
@@ -185,7 +189,35 @@ class BikeRepairShopSimulation:
                     else:
                         results["wait_times"].append(0)
 
+                    if daily_satisfaction_scores:
+                        avg_daily_satisfaction = np.mean(daily_satisfaction_scores)
+                    else:
+                        avg_daily_satisfaction = 0.0  # No customers that day
+
+                    results["customer_satisfaction"].append(avg_daily_satisfaction)
                     day_of_year += 1
+
+        # Basic inspection of dictionary keys
+        print("Keys in the dictionary:", list(results.keys()))
+
+        # Check the length of each list in the dictionary
+        for key, value in results.items():
+            print(f"{key}: {len(value)} elements")
+
+        # Examine the first few elements of each list
+        for key, value in results.items():
+            print(f"\n{key} (first 3 elements):", value[:3])
+
+        # Check the types of values in each list
+        for key, value in results.items():
+            if value:  # Check if the list is not empty
+                print(f"{key} contains elements of type: {type(value[0])}")
+
+        # Check if all lists have the same length (important for DataFrame conversion)
+        lengths = [len(value) for value in results.values()]
+        all_same_length = all(length == lengths[0] for length in lengths)
+        print(f"\nAll lists have the same length: {all_same_length}")
+        print(f"Lengths: {lengths}")
 
         return pd.DataFrame(results)
 
@@ -249,7 +281,7 @@ class BikeRepairShopSimulation:
         axs[1, 1].legend()
 
         plt.tight_layout()
-        plt.savefig('bike_repair_shop_results.png')
+        plt.savefig(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.png')
         plt.show()
 
         return monthly_metrics
