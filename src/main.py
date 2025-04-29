@@ -13,7 +13,7 @@ class BikeRepairShopSimulation:
                             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         # Shop parameters
-        self.mechanic_salary_per_day = 150  # € per day
+        self.mechanic_salary_per_day = 130  # € per day
         self.repair_price_average = 80  # € per repair
         self.parts_cost_average = 30  # € per repair
         self.max_queue_size = 30  # maximum bikes in queue
@@ -88,7 +88,7 @@ class BikeRepairShopSimulation:
         # Initialize results storage
         results = {
             "daily_requests": [], "queue_length": [], "wait_times": [],
-            "daily_revenue": [], "daily_costs": [], "daily_profit": [],
+            "daily_revenue": [], "daily_costs": [], "daily_profit": [], "daily_invoice_amount": [],
             "customer_satisfaction": [], "mechanic_utilization": [],
             "date": [], "month": [], "repairs_completed": [], "repairs_requested": []
         }
@@ -124,6 +124,7 @@ class BikeRepairShopSimulation:
                     # Process repairs for the day
                     repairs_completed = 0
                     revenue = 0
+                    invoice_amount = 0
                     remaining_capacity = daily_capacity
                     wait_times = []
 
@@ -147,7 +148,8 @@ class BikeRepairShopSimulation:
                             # Calculate revenue and satisfaction
                             price_modifier = 1.0 + np.random.normal(0, 0.15)  # Random price variation
                             repair_price = self.repair_price_average * price_modifier
-                            revenue += repair_price - parts_cost
+                            revenue += repair_price # - parts_cost # Part costs should be forwarded to customer
+                            invoice_amount += repair_price + parts_cost
 
                             # Add satisfaction score to daily collection instead of results
                             daily_satisfaction_scores.append(
@@ -180,6 +182,7 @@ class BikeRepairShopSimulation:
                     results["daily_revenue"].append(revenue)
                     results["daily_costs"].append(daily_labor_cost)
                     results["daily_profit"].append(daily_profit)
+                    results["daily_invoice_amount"].append(invoice_amount)
                     results["mechanic_utilization"].append(utilization)
                     results["date"].append(f"{year+1}-{month+1}-{day+1}")
                     results["month"].append(month)
@@ -198,28 +201,6 @@ class BikeRepairShopSimulation:
 
                     results["customer_satisfaction"].append(avg_daily_satisfaction)
                     day_of_year += 1
-
-        # # Basic inspection of dictionary keys
-        # print("Keys in the dictionary:", list(results.keys()))
-        #
-        # # Check the length of each list in the dictionary
-        # for key, value in results.items():
-        #     print(f"{key}: {len(value)} elements")
-        #
-        # # Examine the first few elements of each list
-        # for key, value in results.items():
-        #     print(f"\n{key} (first 3 elements):", value[:3])
-        #
-        # # Check the types of values in each list
-        # for key, value in results.items():
-        #     if value:  # Check if the list is not empty
-        #         print(f"{key} contains elements of type: {type(value[0])}")
-        #
-        # # Check if all lists have the same length (important for DataFrame conversion)
-        # lengths = [len(value) for value in results.values()]
-        # all_same_length = all(length == lengths[0] for length in lengths)
-        # print(f"\nAll lists have the same length: {all_same_length}")
-        # print(f"Lengths: {lengths}")
 
         with open(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.json', "w") as f:
             f.write(json.dumps(results))
@@ -306,9 +287,9 @@ if __name__ == "__main__":
     print("\nScenario 2: Seasonal staffing")
     seasonal_mechanics = [
         2, 2,  # Winter (Jan, Feb)
-        3, 4, 4,  # Spring (Mar, Apr, May)
-        5, 5, 4,  # Summer (Jun, Jul, Aug)
-        3, 3, 2,  # Fall (Sep, Oct, Nov)
+        3, 4, 5,  # Spring (Mar, Apr, May)
+        6, 6, 5,  # Summer (Jun, Jul, Aug)
+        4, 3, 2,  # Fall (Sep, Oct, Nov)
         2  # Winter (Dec)
     ]
     results2 = simulation.simulate(seasonal_mechanics)
