@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -197,27 +199,30 @@ class BikeRepairShopSimulation:
                     results["customer_satisfaction"].append(avg_daily_satisfaction)
                     day_of_year += 1
 
-        # Basic inspection of dictionary keys
-        print("Keys in the dictionary:", list(results.keys()))
+        # # Basic inspection of dictionary keys
+        # print("Keys in the dictionary:", list(results.keys()))
+        #
+        # # Check the length of each list in the dictionary
+        # for key, value in results.items():
+        #     print(f"{key}: {len(value)} elements")
+        #
+        # # Examine the first few elements of each list
+        # for key, value in results.items():
+        #     print(f"\n{key} (first 3 elements):", value[:3])
+        #
+        # # Check the types of values in each list
+        # for key, value in results.items():
+        #     if value:  # Check if the list is not empty
+        #         print(f"{key} contains elements of type: {type(value[0])}")
+        #
+        # # Check if all lists have the same length (important for DataFrame conversion)
+        # lengths = [len(value) for value in results.values()]
+        # all_same_length = all(length == lengths[0] for length in lengths)
+        # print(f"\nAll lists have the same length: {all_same_length}")
+        # print(f"Lengths: {lengths}")
 
-        # Check the length of each list in the dictionary
-        for key, value in results.items():
-            print(f"{key}: {len(value)} elements")
-
-        # Examine the first few elements of each list
-        for key, value in results.items():
-            print(f"\n{key} (first 3 elements):", value[:3])
-
-        # Check the types of values in each list
-        for key, value in results.items():
-            if value:  # Check if the list is not empty
-                print(f"{key} contains elements of type: {type(value[0])}")
-
-        # Check if all lists have the same length (important for DataFrame conversion)
-        lengths = [len(value) for value in results.values()]
-        all_same_length = all(length == lengths[0] for length in lengths)
-        print(f"\nAll lists have the same length: {all_same_length}")
-        print(f"Lengths: {lengths}")
+        with open(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.json', "w") as f:
+            f.write(json.dumps(results))
 
         return pd.DataFrame(results)
 
