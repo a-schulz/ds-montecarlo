@@ -51,9 +51,9 @@ class BikeRepairShopSimulation:
         base_requests = self.monthly_base_repairs[month]
 
         # Weather effect (independent from seasonality)
-        avg_precip = self.monthly_avg_precipitation[month]
-        precip_delta = precipitation - avg_precip
-        weather_factor = 1.0 + (precip_delta * self.precipitation_impact_factor / 100)
+        avg_daily_precip = self.monthly_avg_precipitation[month] / self.days_in_month[month]
+        precip_delta = precipitation - avg_daily_precip
+        weather_factor = 1.0 + (precip_delta * self.precipitation_impact_factor)
 
         # Calculate expected requests and add randomness
         expected_requests = base_requests * weather_factor
@@ -106,10 +106,9 @@ class BikeRepairShopSimulation:
                 for day in range(self.days_in_month[month]):
                     # Generate random precipitation for the day
                     precipitation = np.random.normal(
-                        self.monthly_avg_precipitation[month]/30,
-                        self.monthly_avg_precipitation[month]/100 # standard deviation as 1% of monthly average precipitation
+                        self.monthly_avg_precipitation[month]/self.days_in_month[month],
+                        self.monthly_avg_precipitation[month]/100 # std 1% avg precipitation for the day
                     )
-                    precipitation = max(0, precipitation)
 
                     # Generate repair requests for the day
                     daily_requests = self.generate_daily_repair_requests(month, precipitation)
