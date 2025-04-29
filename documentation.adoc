@@ -1,0 +1,46 @@
+= Monte-Carlo-Simulation einer Fahrradwerkstatt
+== Modellbeschreibung:  
+**Grundparameter:**  
+- Monatliche Reparaturanfragen folgen einem saisonalen Muster.  
+- Höhepunkt in den Frühlings- und Sommermonaten während der Radsaison.  
+- Rückgang im Winter (außer für Wartungen vor dem Frühling).  
+- Zusätzlich unabhängig beeinflusst von der durchschnittlichen monatlichen Niederschlagsmenge.
+
+**Zufällige Elemente:**
+
+* Tägliche Reparaturanfragen schwanken zufällig um den saisonalen Mittelwert.
+  - Saisonaler Mittelwert (Basisparameter) = Anfragen pro Tag pro Monat
+  - Zusätzlicher Einfluss durch den Wetterfaktor (Niederschlagsmenge)
+    - Wetterfaktor anhand der tägliche Schwankung des Niederschlags (normalverteilt)
+  - Poisson Verteilung für das zufällige Eintreffen der Reparaturanfragen pro Tag
+
+
+[,python]
+----
+include::src/main.py[lines="108..114"]
+----
+
+[,python]
+----
+include::src/main.py[lines="49..62"]
+----
+
+
+* Reparaturdauer pro Fahrrad folgt einer Wahrscheinlichkeitsverteilung.
+
+[,python]
+----
+include::src/main.py[lines="64..67"]
+----
+* Benötigte Ersatzteile pro Reparatur sind probabilistisch bestimmt.
+
+[,python]
+----
+include::src/main.py[lines="69..77"]
+----
+
+
+== Zielfunktion:  
+Optimierung der Personalplanung, um Arbeitskosten und Kundenwartezeiten auszubalancieren und den Gewinn zu maximieren.
+
+== Zu beantwortende Fragen:
