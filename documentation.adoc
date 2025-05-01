@@ -1,72 +1,103 @@
 = Monte-Carlo-Simulation einer Fahrradwerkstatt
 
-_Author: Alexander Schulz, Datum: 2025-05-01, Matr.-Nr.: 55297_
-
-== Modellbeschreibung:
-**Grundparameter:**
-
-- Monatliche Reparaturanfragen folgen einem saisonalen Muster.
-- Höhepunkt in den Frühlings- und Sommermonaten während der Radsaison.  
-- Rückgang im Winter (außer für Wartungen vor dem Frühling).  
-- Zusätzlich unabhängig beeinflusst von der durchschnittlichen monatlichen Niederschlagsmenge.
-- Reparaturzeit ist gleichmäßig verteilt zwischen 1 und 3 Stunden.
-
-== Zielfunktionen:
-. Optimierung des Gewinns
-. Optimierung der Mitarbeiteranzahl
-. Optimierung der Kundenzufriedenheit
-
-== Zu beantwortende Frage:
-
-Wie viele Mitarbeiter muss ich pro Monat einstellen, um den Gewinn zu maximieren?
-
-== Vergleich der Ergebnisse
-
-Konstanter Mitarbeiterbestand (5 Mitarbeiter)
-include::src/bike_repair_shop_results_1746105786.575884.png[]
-
-Optimater Mitarbeiterbestand pro Monat
-
-[2, 3, 6, 9, 11, 13, 12, 11, 9, 6, 3, 4]
-
-include::src/bike_repair_shop_results_1746105787.547169.png[]
-
-== Schlussfolgerung
-Die Simulation zeigt, dass die Anzahl der Reparaturanfragen stark saisonal schwankt.
-Die Anzahl der Reparaturaufträge ist im Sommer am höchsten, während sie im Winter am niedrigsten ist.
-Daher ist es sinnvoll, die Anzahl der Mitarbeiter entsprechend der Ergebnisse der Simulation zu variieren.
-
-== Technische Details:
-
-=== Implementierung der Simulation:
-
-* Tägliche Reparaturanfragen schwanken zufällig um den saisonalen Mittelwert.
-- Saisonaler Mittelwert (Basisparameter) = Anfragen pro Tag pro Monat
-- Zusätzlicher Einfluss durch den Wetterfaktor (Niederschlagsmenge)
-- Wetterfaktor anhand der tägliche Schwankung des Niederschlags (normalverteilt)
-- Poisson Verteilung für das zufällige Eintreffen der Reparaturanfragen pro Tag
+Author: Alexander Schulz, Datum: 2025-05-01, Matrikelnummer: 55297
 
 
-[,python]
+== 1. Modellbeschreibung
+
+=== Grundannahmen:
+
+- *Saisonaler Einfluss:* Die Anzahl der Reparaturanfragen pro Tag ist stark abhängig vom Monat. Die Hauptsaison liegt zwischen April und September.
+- *Wetterabhängigkeit:* Zusätzlich zum Monat wirkt die durchschnittliche Niederschlagsmenge als zufälliger, aber unabhängiger Einflussfaktor auf die Nachfrage.
+- *Zufällige Reparaturzeit:* Die Dauer einer Reparatur variiert gleichmäßig zwischen 1 und 3 Stunden.
+- *Zufälliger Bedarf an Ersatzteilen:* Die Anzahl und Art der benötigten Ersatzteile sind probabilistisch verteilt und wirken sich auf die Kosten aus.
+
+== 2. Zielsetzung der Simulation
+
+Die Monte-Carlo-Simulation wurde entwickelt, um die folgenden Fragestellungen zu beantworten:
+
+. Wie viele Mitarbeiter sollten pro Monat eingestellt werden, um den Gewinn zu maximieren?
+. Wie wirkt sich eine konstante Mitarbeiteranzahl auf die Bearbeitungszeit und die Kundenzufriedenheit aus?
+. Wie groß ist der Einfluss saisonaler Schwankungen und wetterbedingter Unsicherheiten auf die Auslastung?
+
+=== Zielfunktionen:
+- Maximierung des monatlichen Gewinns
+- Minimierung der Leerlaufzeit der Mitarbeitenden
+- Minimierung der Wartezeit für Kunden (als Proxy für Zufriedenheit)
+
+== 3. Ergebnisse der Simulation
+
+=== Szenario A: Konstante Mitarbeiteranzahl (5 MA/Jahr)
+
+- In der Hochsaison (Sommermonate) kommt es zu deutlichen Wartezeiten und Umsatzeinbußen durch nicht bearbeitbare Anfragen.
+- In der Nebensaison (Wintermonate) ist die Werkstatt deutlich unterausgelastet.
+
+image::src/bike_repair_shop_results_1746105786.575884.png[Konstante Mitarbeiterzahl]
+
+=== Szenario B: Dynamischer Personaleinsatz nach Bedarf
+
+Optimale monatliche Mitarbeiteranzahl laut Simulation:
+
+[cols="*", options="header"]
+|===
+| Jan | Feb | Mär | Apr | Mai | Jun | Jul | Aug | Sep | Okt | Nov | Dez
+| 2   | 3   | 6   | 9   | 11  | 13  | 12  | 11  | 9   | 6   | 3   | 4
+|===
+
+- Gleichmäßigere Auslastung über das Jahr
+- Geringere Wartezeiten
+- Höchster Jahresgewinn im Vergleich
+
+image::src/bike_repair_shop_results_1746105787.547169.png[Dynamischer Mitarbeiterbedarf]
+
+== 4. Schlussfolgerung
+
+- Die Reparatur-Nachfrage ist stark saisonabhängig und zusätzlich wetterbeeinflusst.
+- Ein konstanter Personalbestand führt zu Ineffizienzen und verpasstes Umsatzpotenzial.
+- Durch monatlich angepasste Mitarbeiterzahlen kann der Gewinn maximiert und die Kundenzufriedenheit deutlich gesteigert werden.
+- Die Investition in flexible Personalplanung ist wirtschaftlich sinnvoll.
+
+== 5. Technische Details
+
+=== Simulationselemente:
+
+- *Anzahl Reparaturanfragen/Tag:*
+- Poisson-verteilte Anfragen basierend auf saisonalem Monatsmittel
+- Zufällige Wettermodifikation des Tagesbedarfs (Niederschlagsmenge als normalverteilter Störfaktor)
+
+- *Reparaturdauer:*
+- Gleichverteilung zwischen 1 und 3 Stunden
+
+- *Ersatzteilbedarf pro Reparatur:*
+- Zufällig bestimmt (z.B. 0–3 Teile, je mit unterschiedlichen Kosten)
+
+=== Auszug aus dem Python-Code:
+
+==== Saisonale Anfrageverteilung:
+[source,python]
 ----
 include::src/main.py[lines="109..115"]
 ----
 
-[,python]
+==== Generierung von Reparaturanfragen:
+[source,python]
 ----
 include::src/main.py[lines="50..63"]
 ----
 
-
-* Reparaturdauer pro Fahrrad folgt einer Wahrscheinlichkeitsverteilung.
-
-[,python]
+==== Reparaturdauer-Verteilung:
+[source,python]
 ----
 include::src/main.py[lines="65..68"]
 ----
-* Benötigte Ersatzteile pro Reparatur sind probabilistisch bestimmt.
 
-[,python]
+==== Ersatzteile-Zufallsgenerator:
+[source,python]
 ----
 include::src/main.py[lines="70..78"]
 ----
+
+== Anhang
+
+Der vollständige Python-Code und die Ergebnisse können als ZIP-Datei zur Verfügung gestellt werden. Bitte ggf. per Mail anfordern.
+
