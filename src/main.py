@@ -205,7 +205,7 @@ class BikeRepairShopSimulation:
                     results["customer_satisfaction"].append(avg_daily_satisfaction)
                     day_of_year += 1
 
-        with open(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.json', "w") as f:
+        with open(f'results/bike_repair_shop_results_{datetime.timestamp(datetime.now())}.json', "w") as f:
             f.write(json.dumps(results))
 
         return pd.DataFrame(results)
@@ -293,7 +293,7 @@ class BikeRepairShopSimulation:
         axs[2, 1].grid(True)
 
         plt.tight_layout()
-        plt.savefig(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.png')
+        plt.savefig(f'results/bike_repair_shop_results_{datetime.timestamp(datetime.now())}.png')
         plt.show()
 
         return monthly_metrics

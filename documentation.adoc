@@ -31,6 +31,9 @@ Die Monte-Carlo-Simulation wurde entwickelt, um die folgenden Fragestellungen zu
 
 - In der Hochsaison (Sommermonate) kommt es zu deutlichen Wartezeiten und Umsatzeinbußen durch nicht bearbeitbare Anfragen.
 - In der Nebensaison (Wintermonate) ist die Werkstatt deutlich unterausgelastet.
+- **Gesamter Jahresgewinn:** €99,090.10
+- **Durchschnittliche Kundenzufriedenheit:** 58.06%
+- **Durchschnittliche Wartezeit:** 2.8 Tage
 
 image::src/bike_repair_shop_results_1746105786.575884.png[Konstante Mitarbeiterzahl]
 
@@ -47,9 +50,11 @@ Optimale monatliche Mitarbeiteranzahl laut Simulation:
 - Gleichmäßigere Auslastung über das Jahr
 - Geringere Wartezeiten
 - Höchster Jahresgewinn im Vergleich
+- **Gesamter Jahresgewinn:** €204,007.34
+- **Durchschnittliche Kundenzufriedenheit:** 90.88%
+- **Durchschnittliche Wartezeit:** 0.6 Tage
 
 image::src/bike_repair_shop_results_1746105787.547169.png[Dynamischer Mitarbeiterbedarf]
-
 == 4. Schlussfolgerung
 
 - Die Reparatur-Nachfrage ist stark saisonabhängig und zusätzlich wetterbeeinflusst.
