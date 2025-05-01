@@ -1,18 +1,50 @@
 = Monte-Carlo-Simulation einer Fahrradwerkstatt
-== Modellbeschreibung:  
-**Grundparameter:**  
-- Monatliche Reparaturanfragen folgen einem saisonalen Muster.  
+
+_Author: Alexander Schulz, Datum: 2025-05-01, Matr.-Nr.: 55297_
+
+== Modellbeschreibung:
+**Grundparameter:**
+
+- Monatliche Reparaturanfragen folgen einem saisonalen Muster.
 - Höhepunkt in den Frühlings- und Sommermonaten während der Radsaison.  
 - Rückgang im Winter (außer für Wartungen vor dem Frühling).  
 - Zusätzlich unabhängig beeinflusst von der durchschnittlichen monatlichen Niederschlagsmenge.
+- Reparaturzeit ist gleichmäßig verteilt zwischen 1 und 3 Stunden.
 
-**Zufällige Elemente:**
+== Zielfunktionen:
+. Optimierung des Gewinns
+. Optimierung der Mitarbeiteranzahl
+. Optimierung der Kundenzufriedenheit
+
+== Zu beantwortende Frage:
+
+Wie viele Mitarbeiter muss ich pro Monat einstellen, um den Gewinn zu maximieren?
+
+== Vergleich der Ergebnisse
+
+Konstanter Mitarbeiterbestand (5 Mitarbeiter)
+include::src/bike_repair_shop_results_1746105786.575884.png[]
+
+Optimater Mitarbeiterbestand pro Monat
+
+[2, 3, 6, 9, 11, 13, 12, 11, 9, 6, 3, 4]
+
+include::src/bike_repair_shop_results_1746105787.547169.png[]
+
+== Schlussfolgerung
+Die Simulation zeigt, dass die Anzahl der Reparaturanfragen stark saisonal schwankt.
+Die Anzahl der Reparaturaufträge ist im Sommer am höchsten, während sie im Winter am niedrigsten ist.
+Daher ist es sinnvoll, die Anzahl der Mitarbeiter entsprechend der Ergebnisse der Simulation zu variieren.
+
+== Technische Details:
+
+=== Implementierung der Simulation:
 
 * Tägliche Reparaturanfragen schwanken zufällig um den saisonalen Mittelwert.
-  - Saisonaler Mittelwert (Basisparameter) = Anfragen pro Tag pro Monat
-  - Zusätzlicher Einfluss durch den Wetterfaktor (Niederschlagsmenge)
-    - Wetterfaktor anhand der tägliche Schwankung des Niederschlags (normalverteilt)
-  - Poisson Verteilung für das zufällige Eintreffen der Reparaturanfragen pro Tag
+- Saisonaler Mittelwert (Basisparameter) = Anfragen pro Tag pro Monat
+- Zusätzlicher Einfluss durch den Wetterfaktor (Niederschlagsmenge)
+- Wetterfaktor anhand der tägliche Schwankung des Niederschlags (normalverteilt)
+- Poisson Verteilung für das zufällige Eintreffen der Reparaturanfragen pro Tag
 
 
 [,python]
@@ -38,29 +70,3 @@ include::src/main.py[lines="65..68"]
 ----
 include::src/main.py[lines="70..78"]
 ----
-
-
-== Zielfunktion:  
-Optimierung der Personalplanung, um Arbeitskosten und Kundenwartezeiten auszubalancieren und den Gewinn zu maximieren.
-
-== Zu beantwortende Fragen:
-
-Neue Zielfunktionen
-Modell zur Optimierung der Preisgestaltung
-Einführung einer variablen Preisgestaltung auf der Grundlage von Nachfrage und Wartezeiten
-Frage: Kann eine dynamische Preisstrategie den Gewinn steigern und gleichzeitig die Kundenzufriedenheit erhalten?
-Funktion zur Priorisierung von Dienstleistungen
-Hinzufügen von Express-Service-Optionen mit Preisaufschlägen, aber garantierten Durchlaufzeiten
-Frage: Welcher Prozentsatz der Kapazität sollte den Expressdiensten zugewiesen werden, um den Gewinn zu maximieren?
-Modell zur Erweiterung der Werkstattkapazität
-Simulieren Sie verschiedene Werkstattgrößen mit mehr Mechanikern während der Hochsaison
-Frage: Wäre die Investition in eine größere Einrichtung mit mehr Reparaturplätzen angesichts der saisonalen Nachfrage rentabel?
-Optimierung des Ersatzteilbestands
-Berücksichtigen Sie die Kosten für die Lagerhaltung von Teilen und die Strafen für Fehlbestände.
-Frage: Wie hoch ist der optimale Lagerbestand für jede Teilekategorie, um die Kosten zu minimieren und gleichzeitig das Serviceniveau zu halten?
-Effizienz der Terminplanung
-Modellieren Sie verschiedene Terminplanungsstrategien (Begehung vs. Termine)
-Fragestellung: Welches ist die optimale Mischung aus geplanten Terminen und begehbarer Kapazität, um Durchsatz und Zufriedenheit zu maximieren?
-Modell für spezielle Dienstleistungen außerhalb der Saison
-Simulieren Sie das Angebot von Winterwartungspaketen, Fahrradaufbewahrung oder Trainingskursen.
-Frage: Können spezialisierte Dienstleistungen außerhalb der Saison genug Umsatz generieren, um den Personalbestand das ganze Jahr über aufrechtzuerhalten?
