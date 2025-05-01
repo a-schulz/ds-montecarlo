@@ -275,13 +275,98 @@ class BikeRepairShopSimulation:
 
         return monthly_metrics
 
+    def calculate_optimal_mechanics(self, run_simulation=True, max_mechanics=20, min_mechanics=1):
+        """
+        Calculate optimal number of mechanics per month based on expected demand and profitability.
+        
+        Args:
+            run_simulation (bool): Whether to run a simulation with the calculated configuration
+            max_mechanics (int): Maximum number of mechanics to consider per month
+            min_mechanics (int): Minimum number of mechanics to consider per month
+            
+        Returns:
+            list: Estimated optimal number of mechanics for each month
+        """
+        optimal_mechanics = []
+        
+        print("Calculating optimal mechanics per month...")
+        
+        for month in range(12):
+            # Base repair requests for this month
+            base_requests = self.monthly_base_repairs[month]
+            
+            # Calculate expected work hours needed
+            expected_daily_requests = base_requests
+            expected_repair_hours = expected_daily_requests * self.repair_time_mean
+            
+            # Calculate mechanics needed (add 10% buffer for variability)
+            mechanics_needed = expected_repair_hours / self.working_hours_per_day * 1.1
+            
+            # Find the most profitable number of mechanics
+            best_profit = float('-inf')
+            best_count = min_mechanics
+            
+            for count in range(min_mechanics, max_mechanics + 1):
+                # Daily capacity with this many mechanics
+                daily_capacity = count * self.working_hours_per_day
+                
+                # Expected repairs completed (limited by capacity)
+                repairs_completed = min(expected_daily_requests, 
+                                       daily_capacity / self.repair_time_mean)
+                
+                # Expected revenue and cost
+                expected_revenue = repairs_completed * self.repair_price_average
+                daily_cost = count * self.mechanic_salary_per_day
+                daily_profit = expected_revenue - daily_cost
+                monthly_profit = daily_profit * self.days_in_month[month]
+                
+                # Factor in utilization and satisfaction
+                utilization = min(1.0, expected_repair_hours / daily_capacity) if daily_capacity > 0 else 1.0
+                
+                # If utilization is too high, customer satisfaction drops and we lose business
+                if utilization > 0.9:
+                    satisfaction_penalty = (utilization - 0.9) * 2000  # Simple penalty model
+                    monthly_profit -= satisfaction_penalty
+                
+                if monthly_profit > best_profit:
+                    best_profit = monthly_profit
+                    best_count = count
+            
+            optimal_mechanics.append(best_count)
+            
+            # Calculate metrics for the chosen count
+            daily_capacity = best_count * self.working_hours_per_day
+            utilization = min(1.0, expected_repair_hours / daily_capacity) if daily_capacity > 0 else 1.0
+            repairs_completed = min(expected_daily_requests, daily_capacity / self.repair_time_mean)
+            expected_revenue = repairs_completed * self.repair_price_average
+            daily_cost = best_count * self.mechanic_salary_per_day
+            monthly_profit = (expected_revenue - daily_cost) * self.days_in_month[month]
+            
+            print(f"Month {self.month_names[month]}: {best_count} mechanics " 
+                  f"(Utilization: {utilization:.2%}, Est. monthly profit: €{monthly_profit:.2f})")
+        
+        print(f"Calculated optimal mechanics configuration: {optimal_mechanics}")
+        
+        # Run simulation with this configuration if requested
+        if run_simulation:
+            print("\nRunning simulation with calculated optimal configuration...")
+            results = self.simulate(optimal_mechanics)
+            metrics = self.analyze_results(results, optimal_mechanics)
+        
+        return optimal_mechanics
+
 # Run the simulation with different staffing scenarios
 if __name__ == "__main__":
     np.random.seed(42)  # For reproducibility
     simulation = BikeRepairShopSimulation()
 
+    # Calculate optimal mechanics configuration
+    print("Calculating optimal mechanics configuration:")
+    optimal_mechanics = simulation.calculate_optimal_mechanics()
+    
+    # Original scenarios below
     # Scenario 1: Constant staffing
-    print("Scenario 1: Constant staffing (3 mechanics all year)")
+    print("\nScenario 1: Constant staffing (3 mechanics all year)")
     constant_mechanics = [3] * 12
     results1 = simulation.simulate(constant_mechanics)
     metrics1 = simulation.analyze_results(results1, constant_mechanics)
