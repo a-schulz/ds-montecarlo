@@ -27,36 +27,53 @@ Dieses Projekt simuliert mithilfe der Monte-Carlo-Methode die saisonale Auslastu
   **oder** alternativ: Standard `pip` + `requirements.txt` (siehe unten)
 - Optional: [Nix](https://nixos.org/download.html) für reproduzierbare Umgebung via `shell.nix`
 
-### 1. Projekt klonen
+---
 
-```bash
-git clone <REPO-URL>
-cd <PROJEKTORDNER>
-```
-
-### 2. Umgebung vorbereiten
-
-Mit Poetry:
+### Variante A: Mit Poetry
 
 ```bash
 cd src
 poetry install
 poetry shell
+python main.py
 ```
 
-Oder mit Nix:
+---
+
+### Variante B: Mit pip (ohne Poetry)
+
+#### 1. Virtuelle Umgebung erstellen (optional, empfohlen)
 
 ```bash
-nix-shell
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 ```
 
-### 3. Simulation starten
+#### 2. Installation via pip
+
+```bash
+pip install -r requirements.txt
+```
+
+#### 3. Simulation starten
 
 ```bash
 python main.py
 ```
 
-Die Ergebnisse werden im Verzeichnis `src/results/` gespeichert. Dort findest du JSON-Dateien mit Rohdaten und PNG-Grafiken zur Visualisierung.
+---
+
+### Variante C: Mit Nix
+
+Falls du `nix-shell` verwendest:
+
+```bash
+nix-shell
+cd src
+python main.py
+```
+
+---
 
 ## 📄 Dokumentation
 
@@ -67,13 +84,6 @@ Die vollständige Beschreibung des Modells, der Fragestellungen und der Ergebnis
 
 ## 📬 Kontakt
 
-Erstellt von: **Alexander Schulz**  
-Datum: 2025-05-01  
-Matrikelnummer: 55297
-
----
-
-Feel free to open Issues oder Pull Requests für Feedback oder Erweiterungen!
-```
-
-Möchtest du außerdem ein Badge für „Made with Python“ oder eine Anleitung zum PDF-Export mit Asciidoctor ergänzen?
+**Ersteller:** Alexander Schulz  
+**Datum:** 2025-05-01  
+**Matrikelnummer:** 55297
