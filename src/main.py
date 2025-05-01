@@ -237,7 +237,7 @@ class BikeRepairShopSimulation:
         print(f"Average Wait Time: {avg_wait_time:.1f} days")
 
         # Visualization
-        fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+        fig, axs = plt.subplots(3, 2, figsize=(15, 10))
 
         # Plot 1: Profit by Month
         axs[0, 0].bar(monthly_metrics['month_name'], monthly_metrics['daily_profit'])
@@ -245,12 +245,15 @@ class BikeRepairShopSimulation:
         axs[0, 0].set_xlabel('Month')
         axs[0, 0].set_ylabel('Profit (€)')
 
-        # Plot 2: Mechanic Utilization
-        axs[0, 1].plot(monthly_metrics['month_name'], monthly_metrics['mechanic_utilization'], marker='o')
-        axs[0, 1].set_title('Monthly Mechanic Utilization')
+        # Plot 2: Repairs Requested vs. Completed
+        axs[0, 1].bar(monthly_metrics['month_name'], monthly_metrics['repairs_requested'],
+                      label='Requested', alpha=0.7)
+        axs[0, 1].bar(monthly_metrics['month_name'], monthly_metrics['repairs_completed'],
+                      label='Completed', alpha=0.7)
+        axs[0, 1].set_title('Monthly Repair Volume')
         axs[0, 1].set_xlabel('Month')
-        axs[0, 1].set_ylabel('Utilization Rate')
-        axs[0, 1].grid(True)
+        axs[0, 1].set_ylabel('Number of Repairs')
+        axs[0, 1].legend()
 
         # Plot 3: Customer Wait Times
         axs[1, 0].plot(monthly_metrics['month_name'], monthly_metrics['wait_times'], marker='s')
@@ -259,15 +262,35 @@ class BikeRepairShopSimulation:
         axs[1, 0].set_ylabel('Wait Time (days)')
         axs[1, 0].grid(True)
 
-        # Plot 4: Repairs Requested vs. Completed
-        axs[1, 1].bar(monthly_metrics['month_name'], monthly_metrics['repairs_requested'],
-                      label='Requested', alpha=0.7)
-        axs[1, 1].bar(monthly_metrics['month_name'], monthly_metrics['repairs_completed'],
-                      label='Completed', alpha=0.7)
-        axs[1, 1].set_title('Monthly Repair Volume')
+
+        # Plot 4: Mechanic Utilization
+        axs[1, 1].plot(monthly_metrics['month_name'], monthly_metrics['mechanic_utilization'], marker='o')
+        axs[1, 1].set_title('Monthly Mechanic Utilization')
         axs[1, 1].set_xlabel('Month')
-        axs[1, 1].set_ylabel('Number of Repairs')
-        axs[1, 1].legend()
+        axs[1, 1].set_ylabel('Utilization Rate')
+        axs[1, 1].grid(True)
+
+        # Plot 5: Customer Satisfaction
+        axs[2, 0].plot(monthly_metrics['month_name'], monthly_metrics['customer_satisfaction'], marker='o', color='orange')
+        axs[2, 0].set_title('Customer Satisfaction Over the Year')
+        axs[2, 0].set_xlabel('Month')
+        axs[2, 0].set_ylabel('Satisfaction Rate')
+        axs[2, 0].grid(True)
+        axs[2, 0].set_ylim(0, 1)
+        for i, v in enumerate(monthly_metrics['customer_satisfaction']):
+            axs[2, 0].text(i, v + 0.02, f"{v:.2%}", ha='center', va='bottom')
+        axs[2, 0].set_xticks(range(len(monthly_metrics['month_name'])))
+        axs[2, 0].set_xticklabels(monthly_metrics['month_name'], rotation=45)
+        axs[2, 0].set_yticks(np.arange(0, 1.1, 0.1))
+        axs[2, 0].set_yticklabels([f"{int(v*100)}%" for v in np.arange(0, 1.1, 0.1)])
+        axs[2, 0].legend(['Customer Satisfaction'])
+
+        # Plot 6: Queue Length
+        axs[2, 1].plot(monthly_metrics['month_name'], monthly_metrics['queue_length'], marker='d', color='purple')
+        axs[2, 1].set_title('Average Queue Length Over the Year')
+        axs[2, 1].set_xlabel('Month')
+        axs[2, 1].set_ylabel('Queue Length')
+        axs[2, 1].grid(True)
 
         plt.tight_layout()
         plt.savefig(f'bike_repair_shop_results_{datetime.timestamp(datetime.now())}.png')
@@ -359,26 +382,31 @@ class BikeRepairShopSimulation:
 if __name__ == "__main__":
     np.random.seed(42)  # For reproducibility
     simulation = BikeRepairShopSimulation()
-
-    # Calculate optimal mechanics configuration
-    print("Calculating optimal mechanics configuration:")
-    optimal_mechanics = simulation.calculate_optimal_mechanics()
     
     # Original scenarios below
     # Scenario 1: Constant staffing
-    print("\nScenario 1: Constant staffing (3 mechanics all year)")
-    constant_mechanics = [3] * 12
+    print("\nScenario 1: Constant staffing (5 mechanics all year)")
+    constant_mechanics = [5] * 12
     results1 = simulation.simulate(constant_mechanics)
     metrics1 = simulation.analyze_results(results1, constant_mechanics)
 
-    # Scenario 2: Seasonal staffing
-    print("\nScenario 2: Seasonal staffing")
-    seasonal_mechanics = [
-        2, 2,  # Winter (Jan, Feb)
-        3, 4, 5,  # Spring (Mar, Apr, May)
-        6, 6, 5,  # Summer (Jun, Jul, Aug)
-        4, 3, 2,  # Fall (Sep, Oct, Nov)
-        2  # Winter (Dec)
-    ]
-    results2 = simulation.simulate(seasonal_mechanics)
-    metrics2 = simulation.analyze_results(results2, seasonal_mechanics)
+    # # Scenario 2: Seasonal staffing (intuitively defined)
+    # print("\nScenario 2: Seasonal staffing")
+    # seasonal_mechanics = [
+    #     2, 2,  # Winter (Jan, Feb)
+    #     3, 4, 5,  # Spring (Mar, Apr, May)
+    #     6, 6, 5,  # Summer (Jun, Jul, Aug)
+    #     4, 3, 2,  # Fall (Sep, Oct, Nov)
+    #     2  # Winter (Dec)
+    # ]
+    # results2 = simulation.simulate(seasonal_mechanics)
+    # metrics2 = simulation.analyze_results(results2, seasonal_mechanics)
+
+    # Calculate optimal mechanics configuration
+    print("Calculating optimal mechanics configuration:")
+    optimal_mechanics = simulation.calculate_optimal_mechanics(False)
+
+    # Scenario 3: Optimal staffing
+    print("\nScenario 3: Optimal staffing")
+    results3 = simulation.simulate(optimal_mechanics)
+    metrics3 = simulation.analyze_results(results3, optimal_mechanics)
