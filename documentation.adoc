@@ -17,12 +17,12 @@
 
 [,python]
 ----
-include::src/main.py[lines="108..114"]
+include::src/main.py[lines="109..115"]
 ----
 
 [,python]
 ----
-include::src/main.py[lines="49..62"]
+include::src/main.py[lines="50..63"]
 ----
 
 
@@ -30,13 +30,13 @@ include::src/main.py[lines="49..62"]
 
 [,python]
 ----
-include::src/main.py[lines="64..67"]
+include::src/main.py[lines="65..68"]
 ----
 * Benötigte Ersatzteile pro Reparatur sind probabilistisch bestimmt.
 
 [,python]
 ----
-include::src/main.py[lines="69..77"]
+include::src/main.py[lines="70..78"]
 ----
 
 
@@ -44,3 +44,23 @@ include::src/main.py[lines="69..77"]
 Optimierung der Personalplanung, um Arbeitskosten und Kundenwartezeiten auszubalancieren und den Gewinn zu maximieren.
 
 == Zu beantwortende Fragen:
+
+Neue Zielfunktionen
+Modell zur Optimierung der Preisgestaltung
+Einführung einer variablen Preisgestaltung auf der Grundlage von Nachfrage und Wartezeiten
+Frage: Kann eine dynamische Preisstrategie den Gewinn steigern und gleichzeitig die Kundenzufriedenheit erhalten?
+Funktion zur Priorisierung von Dienstleistungen
+Hinzufügen von Express-Service-Optionen mit Preisaufschlägen, aber garantierten Durchlaufzeiten
+Frage: Welcher Prozentsatz der Kapazität sollte den Expressdiensten zugewiesen werden, um den Gewinn zu maximieren?
+Modell zur Erweiterung der Werkstattkapazität
+Simulieren Sie verschiedene Werkstattgrößen mit mehr Mechanikern während der Hochsaison
+Frage: Wäre die Investition in eine größere Einrichtung mit mehr Reparaturplätzen angesichts der saisonalen Nachfrage rentabel?
+Optimierung des Ersatzteilbestands
+Berücksichtigen Sie die Kosten für die Lagerhaltung von Teilen und die Strafen für Fehlbestände.
+Frage: Wie hoch ist der optimale Lagerbestand für jede Teilekategorie, um die Kosten zu minimieren und gleichzeitig das Serviceniveau zu halten?
+Effizienz der Terminplanung
+Modellieren Sie verschiedene Terminplanungsstrategien (Begehung vs. Termine)
+Fragestellung: Welches ist die optimale Mischung aus geplanten Terminen und begehbarer Kapazität, um Durchsatz und Zufriedenheit zu maximieren?
+Modell für spezielle Dienstleistungen außerhalb der Saison
+Simulieren Sie das Angebot von Winterwartungspaketen, Fahrradaufbewahrung oder Trainingskursen.
+Frage: Können spezialisierte Dienstleistungen außerhalb der Saison genug Umsatz generieren, um den Personalbestand das ganze Jahr über aufrechtzuerhalten?

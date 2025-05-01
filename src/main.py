@@ -17,6 +17,7 @@ class BikeRepairShopSimulation:
         self.repair_price_average = 80  # € per repair
         self.parts_cost_average = 30  # € per repair
         self.max_queue_size = 30  # maximum bikes in queue
+        self.queue_leave_probability = 0.2  # probability of leaving if queue is too long
 
         # Seasonal base parameters - repairs per day by month
         self.monthly_base_repairs = [5, 8, 15, 25, 30, 35, 32, 30, 25, 15, 8, 10]
@@ -81,6 +82,7 @@ class BikeRepairShopSimulation:
         if wait_days <= self.max_acceptable_wait_days:
             satisfaction = 1.0 - (wait_days * self.satisfaction_decay_per_day)
         else:
+            # Set minimum satisfaction to 0.2 if wait time exceeds max acceptable
             satisfaction = max(0.2, 1.0 - (wait_days * self.satisfaction_decay_per_day))
         return max(0, min(1, satisfaction))
 
@@ -118,6 +120,8 @@ class BikeRepairShopSimulation:
                         repair_time = self.generate_repair_time()
                         parts_category = self.determine_parts_requirement()
                         parts_cost = self.parts_costs[parts_category]
+                        if len(queue) > self.max_queue_size and np.random.random() < self.queue_leave_probability:
+                            continue
                         queue.append((day_of_year, repair_time, parts_cost))
 
                     # Process repairs for the day
@@ -156,11 +160,11 @@ class BikeRepairShopSimulation:
                             )
                         else:
                             # Cannot complete this repair today
+                            # If queue is getting too long, customers might go elsewhere
+                            if len(new_queue) > self.max_queue_size and np.random.random() < self.queue_leave_probability:
+                                continue
                             new_queue.append(request)
 
-                            # If queue is getting too long, customers might go elsewhere
-                            if len(new_queue) > self.max_queue_size and np.random.random() < 0.2:
-                                continue
 
                     # Update queue
                     queue = new_queue
